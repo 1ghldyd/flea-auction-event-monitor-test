@@ -1,12 +1,10 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {Header, HorizontalScrollView} from '../components';
 import EventSource from 'react-native-sse';
 import {useDispatch} from 'react-redux';
 import {setItems as setItemsInRedux} from '../store/auctionViewed';
-
-const idStart = 4103;
-const idEnd = 4150;
+import {ID_START, ID_END} from '../constants';
 
 const Tab1 = () => {
   const dispatch = useDispatch();
@@ -15,8 +13,8 @@ const Tab1 = () => {
 
   const makeDummyItems = useCallback(() => {
     const arr = [];
-    let i = idStart;
-    while (i <= idEnd) {
+    let i = ID_START;
+    while (i <= ID_END) {
       arr.push({auctionId: i, viewCount: null});
       i += 1;
     }
@@ -31,8 +29,8 @@ const Tab1 = () => {
         setItems(prev => [...prev.slice(0, index), data, ...prev.slice(index + 1)]);
         const newItems = [..._items.current.slice(0, index), data, ..._items.current.slice(index + 1)];
         dispatch(setItemsInRedux(newItems));
-      } else {
-        console.log(`Error, esCallback, index(${data.auctionId}) is -1`);
+        // } else {
+        //   console.log(`Error, esCallback, index(${data.auctionId}) is -1`);
       }
     }
   }, []);
@@ -56,17 +54,19 @@ const Tab1 = () => {
   }, []);
 
   return (
-    <View style={{width: '100%', height: '100%'}}>
-      <Header title="SSE 이벤트 모니터링" />
-      <View style={styles.flex}>
-        <Header title="가로 스크롤 영역 #1 (props)" insert style={{paddingLeft: 8}} />
-        <HorizontalScrollView items={items} />
+    <SafeAreaView>
+      <View style={{width: '100%', height: '100%'}}>
+        <Header title="SSE 이벤트 모니터링" />
+        <View style={styles.flex}>
+          <Header title="가로 스크롤 영역 #1 (props)" insert style={{paddingLeft: 8}} />
+          <HorizontalScrollView items={items} />
+        </View>
+        <View style={styles.flex}>
+          <Header title="가로 스크롤 영역 #2 (redux)" insert style={{paddingLeft: 8}} />
+          <HorizontalScrollView />
+        </View>
       </View>
-      <View style={styles.flex}>
-        <Header title="가로 스크롤 영역 #2 (redux)" insert style={{paddingLeft: 8}} />
-        <HorizontalScrollView />
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 export default Tab1;
